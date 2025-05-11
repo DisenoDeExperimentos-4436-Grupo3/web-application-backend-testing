@@ -1,13 +1,12 @@
 package pe.edu.upc.managewise.backend.iam.interfaces.rest;
 
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+import pe.edu.upc.managewise.backend.iam.domain.services.RecaptchaService;
 import pe.edu.upc.managewise.backend.iam.domain.services.UserCommandService;
 import pe.edu.upc.managewise.backend.iam.interfaces.rest.resources.AuthenticatedUserResource;
 import pe.edu.upc.managewise.backend.iam.interfaces.rest.resources.SignInResource;
@@ -35,9 +34,23 @@ import pe.edu.upc.managewise.backend.iam.interfaces.rest.transform.UserResourceF
 public class AuthenticationController {
 
   private final UserCommandService userCommandService;
+  private final RecaptchaService recaptchaService;
 
-  public AuthenticationController(UserCommandService userCommandService) {
+  public AuthenticationController(UserCommandService userCommandService, RecaptchaService recaptchaService) {
     this.userCommandService = userCommandService;
+    this.recaptchaService = recaptchaService;
+  }
+
+  private boolean isWebRequest(HttpServletRequest request) {
+    String userAgent = request.getHeader("User-Agent");
+    return userAgent != null && (
+            userAgent.contains("Mozilla") ||
+                    userAgent.contains("Chrome") ||
+                    userAgent.contains("Safari") ||
+                    userAgent.contains("Firefox") ||
+                    userAgent.contains("Edge") ||
+                    userAgent.contains("Opera GX")
+    );
   }
 
   /**
@@ -45,20 +58,31 @@ public class AuthenticationController {
    * @param signInResource the sign-in request body.
    * @return the authenticated user resource.
    */
+
   @PostMapping("/sign-in")
   public ResponseEntity<AuthenticatedUserResource> signIn(
-      @RequestBody SignInResource signInResource) {
+          @RequestBody SignInResource signInResource,
+          HttpServletRequest request) {
 
-    var signInCommand = SignInCommandFromResourceAssembler
-        .toCommandFromResource(signInResource);
+    if (isWebRequest(request)) {
+      String token = signInResource.recaptchaToken(); // ✅ token desde el body
+      if (token == null || !recaptchaService.verifyRecaptcha(token)) {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
+      }
+    }
+
+    var signInCommand = SignInCommandFromResourceAssembler.toCommandFromResource(signInResource);
     var authenticatedUser = userCommandService.handle(signInCommand);
     if (authenticatedUser.isEmpty()) {
       return ResponseEntity.notFound().build();
     }
 
     var authenticatedUserResource = AuthenticatedUserResourceFromEntityAssembler
-        .toResourceFromEntity(
-            authenticatedUser.get().getLeft(), authenticatedUser.get().getRight());
+            .toResourceFromEntity(
+                    authenticatedUser.get().getLeft(),
+                    authenticatedUser.get().getRight()
+            );
+
     return ResponseEntity.ok(authenticatedUserResource);
   }
 
@@ -67,14 +91,25 @@ public class AuthenticationController {
    * @param signUpResource the sign-up request body.
    * @return the created user resource.
    */
+
   @PostMapping("/sign-up")
-  public ResponseEntity<UserResource> signUp(@RequestBody SignUpResource signUpResource) {
-    var signUpCommand = SignUpCommandFromResourceAssembler
-        .toCommandFromResource(signUpResource);
+  public ResponseEntity<UserResource> signUp(
+          @RequestBody SignUpResource signUpResource,
+          HttpServletRequest request) {
+
+    if (isWebRequest(request)) {
+      String token = signUpResource.recaptchaToken(); // ✅ accediendo al campo del record
+      if (token == null || !recaptchaService.verifyRecaptcha(token)) {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
+      }
+    }
+
+    var signUpCommand = SignUpCommandFromResourceAssembler.toCommandFromResource(signUpResource);
     var user = userCommandService.handle(signUpCommand);
     if (user.isEmpty()) {
       return ResponseEntity.badRequest().build();
     }
+
     var userResource = UserResourceFromEntityAssembler.toResourceFromEntity(user.get());
     return new ResponseEntity<>(userResource, HttpStatus.CREATED);
   }
