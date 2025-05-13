@@ -1,7 +1,6 @@
-package pe.edu.upc.managewise.backend;
+package pe.edu.upc.managewise.backend.core.entities.unit.test;
 
 import org.junit.jupiter.api.Test;
-import pe.edu.upc.managewise.backend.issues.domain.model.commands.DeleteIssueCommand;
 import pe.edu.upc.managewise.backend.members.domain.model.commands.CreateMemberCommand;
 import pe.edu.upc.managewise.backend.members.domain.model.commands.DeleteMemberCommand;
 import pe.edu.upc.managewise.backend.members.domain.model.commands.UpdateMemberCommand;

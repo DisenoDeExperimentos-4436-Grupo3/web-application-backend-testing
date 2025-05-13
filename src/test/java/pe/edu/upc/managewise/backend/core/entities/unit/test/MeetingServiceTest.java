@@ -1,6 +1,5 @@
-package pe.edu.upc.managewise.backend;
+package pe.edu.upc.managewise.backend.core.entities.unit.test;
 
-import org.checkerframework.checker.units.qual.C;
 import org.junit.jupiter.api.Test;
 import pe.edu.upc.managewise.backend.meeting.domain.model.commands.CreateMeetingCommand;
 import pe.edu.upc.managewise.backend.meeting.domain.model.commands.CreateRecordingCommand;

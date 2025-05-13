@@ -1,4 +1,4 @@
-package pe.edu.upc.managewise.backend;
+package pe.edu.upc.managewise.backend.core.entities.unit.test;
 
 import org.junit.jupiter.api.Test;
 import pe.edu.upc.managewise.backend.iam.domain.model.commands.SignInCommand;
