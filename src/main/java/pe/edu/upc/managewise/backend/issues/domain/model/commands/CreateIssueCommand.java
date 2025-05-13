@@ -6,5 +6,7 @@ import pe.edu.upc.managewise.backend.issues.interfaces.rest.resources.EventRecor
 
 import java.util.List;
 
-public record CreateIssueCommand(String title, String sprintAssociate , String description, IssueStatuses status, IssuePriorities priority, String assignedTo, String madeBy, String createdIn, String resolutionDate, List<EventRecordItemResource> history) {
+public record CreateIssueCommand(String title, String sprintAssociate , String description, IssueStatuses status,
+                                 IssuePriorities priority, String assignedTo, String madeBy, String createdIn,
+                                 String resolutionDate, List<EventRecordItemResource> history) {
 }
