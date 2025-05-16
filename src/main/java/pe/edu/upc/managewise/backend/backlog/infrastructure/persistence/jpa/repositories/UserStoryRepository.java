@@ -12,4 +12,6 @@ public interface UserStoryRepository extends JpaRepository<UserStory, Long> {
     boolean existsByTitle(String title);
     boolean existsByTitleAndIdIsNot(String title, Long id);
     Optional<UserStory> findByTitle(String title);
+
+    List<UserStory> findByUserId(Long userId);
 }

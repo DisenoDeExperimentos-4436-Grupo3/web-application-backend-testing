@@ -20,10 +20,14 @@ public class Epic extends AuditableAbstractAggregateRoot<Epic> {
     @Enumerated(EnumType.STRING)
     private Status status;
 
+    //agregar id de usuario
+    private Long userId;
+
     public Epic() {
     }
 
-    public Epic(String title, String description) {
+    public Epic(Long userId, String title, String description) {
+        this.userId = userId;
         this.title = title;
         this.description = description;
         this.status = Status.TO_DO;
@@ -31,6 +35,7 @@ public class Epic extends AuditableAbstractAggregateRoot<Epic> {
 
     public Epic(CreateEpicCommand command){
         this();
+        this.userId = command.userId();
         this.title = command.title();
         this.description = command.description();
     }

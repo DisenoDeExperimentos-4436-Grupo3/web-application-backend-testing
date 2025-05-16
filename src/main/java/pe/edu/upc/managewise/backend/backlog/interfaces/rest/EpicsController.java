@@ -9,6 +9,7 @@ import pe.edu.upc.managewise.backend.backlog.domain.model.commands.DeleteEpicCom
 import pe.edu.upc.managewise.backend.backlog.domain.model.commands.UpdateEpicCommand;
 import pe.edu.upc.managewise.backend.backlog.domain.model.queries.GetAllEpicsQuery;
 import pe.edu.upc.managewise.backend.backlog.domain.model.queries.GetEpicByIdQuery;
+import pe.edu.upc.managewise.backend.backlog.domain.model.queries.GetEpicsByUserIdQuery;
 import pe.edu.upc.managewise.backend.backlog.domain.services.EpicCommandService;
 import pe.edu.upc.managewise.backend.backlog.domain.services.EpicQueryService;
 import pe.edu.upc.managewise.backend.backlog.interfaces.rest.resources.CreateEpicResource;
@@ -33,9 +34,9 @@ public class EpicsController {
         this.epicCommandService = epicCommandService;
     }
 
-    @PostMapping
-    public ResponseEntity<EpicResource> createEpic(@RequestBody CreateEpicResource resource) {
-        var createEpicCommand = CreateEpicCommandFromResourceAssembler.toCommandFromResource(resource);
+    @PostMapping("/{userId}")
+    public ResponseEntity<EpicResource> createEpic(@PathVariable Long userId, @RequestBody CreateEpicResource resource) {
+        var createEpicCommand = CreateEpicCommandFromResourceAssembler.toCommandFromResource(userId, resource);
         var epicId = this.epicCommandService.handle(createEpicCommand);
 
         if (epicId.equals(0L)) {
@@ -86,4 +87,16 @@ public class EpicsController {
         this.epicCommandService.handle(deleteEpicCommand);
         return ResponseEntity.noContent().build();
     }
+
+    //getepic por userId
+    @GetMapping("/user/{userId}")
+    public ResponseEntity<List<EpicResource>> getEpicsByUserId(@PathVariable Long userId) {
+        var getEpicsByUserIdQuery = new GetEpicsByUserIdQuery(userId);
+        var epics = this.epicQueryService.handle(getEpicsByUserIdQuery);
+        var epicResources = epics.stream()
+                .map(EpicResourceFromEntityAssembler::toResourceFromEntity)
+                .collect(Collectors.toList());
+        return ResponseEntity.ok(epicResources);
+    }
+
 }

@@ -37,6 +37,7 @@ public class UserStory extends AuditableAbstractAggregateRoot<UserStory> {
     private Sprint sprint;
     */
     private Long sprintId;
+    private Long userId;
 
     //en un fururo cambiar a storypoints
     private Integer effort;
@@ -50,7 +51,8 @@ public class UserStory extends AuditableAbstractAggregateRoot<UserStory> {
         this.status = Status.TO_DO;
     }
 
-    public UserStory(String title, String description, Long epicId, Long sprintId, Integer effort) {
+    public UserStory(Long userId, String title, String description, Long epicId, Long sprintId, Integer effort) {
+        this.userId = userId;
         this.title = title;
         this.description = description;
         this.status = Status.TO_DO;
@@ -62,6 +64,7 @@ public class UserStory extends AuditableAbstractAggregateRoot<UserStory> {
 
     public UserStory(CreateUserStoryCommand command){
         this();
+        this.userId = command.userId();
         this.title = command.title();
         this.description = command.description();
         this.status = Status.TO_DO;

@@ -5,6 +5,7 @@ import pe.edu.upc.managewise.backend.backlog.interfaces.rest.resources.TaskItemR
 import java.util.List;
 
 public record CreateUserStoryCommand(
+        Long userId,
         String title,
         String description,
         Long epicId,

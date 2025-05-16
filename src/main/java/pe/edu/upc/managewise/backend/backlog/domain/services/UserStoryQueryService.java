@@ -4,6 +4,7 @@ import pe.edu.upc.managewise.backend.backlog.domain.model.aggregates.UserStory;
 import pe.edu.upc.managewise.backend.backlog.domain.model.entities.TaskItem;
 import pe.edu.upc.managewise.backend.backlog.domain.model.queries.GetAllUserStoriesQuery;
 import pe.edu.upc.managewise.backend.backlog.domain.model.queries.GetAllTaskItemsByUserStoryIdQuery;
+import pe.edu.upc.managewise.backend.backlog.domain.model.queries.GetUserStoriesByUserId;
 import pe.edu.upc.managewise.backend.backlog.domain.model.queries.GetUserStoryByIdQuery;
 
 import java.util.List;
@@ -14,4 +15,6 @@ public interface UserStoryQueryService {
     Optional<UserStory> handle(GetUserStoryByIdQuery query);
 
     List<TaskItem> handle(GetAllTaskItemsByUserStoryIdQuery query);
+
+    List<UserStory> handle(GetUserStoriesByUserId query);
 }

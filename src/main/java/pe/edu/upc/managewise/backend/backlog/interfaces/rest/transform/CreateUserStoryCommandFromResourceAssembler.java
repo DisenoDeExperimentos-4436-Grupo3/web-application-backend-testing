@@ -6,8 +6,9 @@ import pe.edu.upc.managewise.backend.backlog.interfaces.rest.resources.CreateUse
 import java.util.Collections;
 
 public class CreateUserStoryCommandFromResourceAssembler {
-    public static CreateUserStoryCommand toCommandFromResource(CreateUserStoryResource resource){
+    public static CreateUserStoryCommand toCommandFromResource(Long userId, CreateUserStoryResource resource){
         return new CreateUserStoryCommand(
+                userId,
                 resource.title(),
                 resource.description(),
                 resource.epicId(),

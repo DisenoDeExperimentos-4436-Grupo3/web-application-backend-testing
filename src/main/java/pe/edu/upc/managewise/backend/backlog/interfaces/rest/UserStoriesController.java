@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.*;
 import pe.edu.upc.managewise.backend.backlog.domain.model.commands.*;
 import pe.edu.upc.managewise.backend.backlog.domain.model.entities.TaskItem;
 import pe.edu.upc.managewise.backend.backlog.domain.model.queries.GetAllUserStoriesQuery;
+import pe.edu.upc.managewise.backend.backlog.domain.model.queries.GetUserStoriesByUserId;
 import pe.edu.upc.managewise.backend.backlog.domain.model.queries.GetUserStoryByIdQuery;
 import pe.edu.upc.managewise.backend.backlog.domain.services.UserStoryCommandService;
 import pe.edu.upc.managewise.backend.backlog.domain.services.UserStoryQueryService;
@@ -30,9 +31,9 @@ public class UserStoriesController {
         this.userStoryCommandService = userStoryCommandService;
     }
 
-    @PostMapping
-    public ResponseEntity<UserStoryResource> createUserStory(@RequestBody CreateUserStoryResource resource) {
-        var createUserStoryCommand = CreateUserStoryCommandFromResourceAssembler.toCommandFromResource(resource);
+    @PostMapping("/{userId}")
+    public ResponseEntity<UserStoryResource> createUserStory(@PathVariable Long userId, @RequestBody CreateUserStoryResource resource) {
+        var createUserStoryCommand = CreateUserStoryCommandFromResourceAssembler.toCommandFromResource(userId, resource);
         var userStoryId = this.userStoryCommandService.handle(createUserStoryCommand);
 
         if (userStoryId.equals(0L)) {
@@ -44,6 +45,17 @@ public class UserStoriesController {
 
         var userStoryResource = UserStoryResourceFromEntityAssembler.toResourceFromEntity(optionalUserStory.get());
         return new ResponseEntity<>(userStoryResource, HttpStatus.CREATED);
+    }
+
+    //get userStory por userId
+    @GetMapping("/user/{userId}")
+    public ResponseEntity<List<UserStoryResource>> getUserStoriesByUserId(@PathVariable Long userId) {
+        var getUserStoriesByUserIdQuery = new GetUserStoriesByUserId(userId);
+        var userStories = this.userStoryQueryService.handle(getUserStoriesByUserIdQuery);
+        var userStoryResources = userStories.stream()
+                .map(UserStoryResourceFromEntityAssembler::toResourceFromEntity)
+                .collect(Collectors.toList());
+        return ResponseEntity.ok(userStoryResources);
     }
 
     @PostMapping("/{id}/tasks")

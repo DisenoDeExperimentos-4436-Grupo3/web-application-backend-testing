@@ -22,7 +22,7 @@ public class BacklogServiceTest {
 
 
         // Act
-        CreateEpicCommand createEpicCommand = new CreateEpicCommand(title, description);
+        CreateEpicCommand createEpicCommand = new CreateEpicCommand(2L, title, description);
 
         // Assert
         assertEquals(title, createEpicCommand.title());
