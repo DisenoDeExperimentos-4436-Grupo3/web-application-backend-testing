@@ -4,10 +4,7 @@ import org.springframework.stereotype.Service;
 import pe.edu.upc.managewise.backend.backlog.domain.model.aggregates.Sprint;
 import pe.edu.upc.managewise.backend.backlog.domain.model.queries.GetSprintByTittleQuery;
 import pe.edu.upc.managewise.backend.members.domain.model.aggregates.Member;
-import pe.edu.upc.managewise.backend.members.domain.model.queries.GetAllMembersQuery;
-import pe.edu.upc.managewise.backend.members.domain.model.queries.GetMemberByFullNameQuery;
-import pe.edu.upc.managewise.backend.members.domain.model.queries.GetMemberByIdQuery;
-import pe.edu.upc.managewise.backend.members.domain.model.queries.GetMembersByRoleQuery;
+import pe.edu.upc.managewise.backend.members.domain.model.queries.*;
 import pe.edu.upc.managewise.backend.members.domain.services.MemberQueryService;
 import pe.edu.upc.managewise.backend.members.infrastructure.persistence.jpa.repositories.MemberRepository;
 
@@ -41,5 +38,10 @@ public class MemberQueryServiceImpl implements MemberQueryService {
     @Override
     public Optional<Member> handle(GetMemberByFullNameQuery query) {
         return this.memberRepository.findByFullName(query.fullName());
+    }
+
+    @Override
+    public List<Member> handle(GetMembersByUserIdQuery query) {
+        return this.memberRepository.findByUserId(query.userId());
     }
 }

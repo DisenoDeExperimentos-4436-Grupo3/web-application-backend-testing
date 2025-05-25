@@ -45,7 +45,7 @@ public class Meeting extends AuditableAbstractAggregateRoot<Meeting> {
 
     @Getter
     @Column(name = "access_code", length = 36, nullable = false, unique = true)
-    private String accessCode = UUID.randomUUID().toString();
+    private String accessCode;
 
     @OneToMany(mappedBy = "meeting", cascade = CascadeType.ALL, orphanRemoval = true) // Aquí haces referencia a la propiedad 'meeting' en Recording
     private List<Recording> recordings;
@@ -64,9 +64,10 @@ public class Meeting extends AuditableAbstractAggregateRoot<Meeting> {
         return recordings;
     }
 
+    /*
     public void setRecordings(List<Recording> recordings) {
         this.recordings = recordings;
-    }
+    }*/
 
     //---------------------------------------------------
     public Meeting(String title, String dateStr, String timeStr, String link, String participants) {

@@ -7,12 +7,20 @@ import java.time.LocalTime;
 import java.time.format.DateTimeParseException;
 
 @Embeddable
-public record MeetingTime(LocalTime time) {
+public class MeetingTime {
 
-    public MeetingTime {
+    private LocalTime time;
+
+    // Constructor sin argumentos requerido por JPA
+    protected MeetingTime() {
+    }
+
+    // Constructor con validación
+    public MeetingTime(LocalTime time) {
         if (time == null) {
             throw new IllegalArgumentException("Time cannot be null");
         }
+        this.time = time;
     }
 
     // Método de fábrica para crear MeetingTime a partir de una cadena
@@ -23,6 +31,10 @@ public record MeetingTime(LocalTime time) {
         } catch (DateTimeParseException e) {
             throw new IllegalArgumentException("Invalid time format: " + timeStr);
         }
+    }
+
+    public LocalTime getTime() {
+        return time;
     }
 
     @Override

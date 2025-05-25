@@ -56,7 +56,7 @@ public class IssuesControllerTest {
         );
 
         Long expectedId = 1L;
-        CreateIssueCommand expectedCommand = CreateIssueCommandFromResourceAssembler.toCommandFromResource(resource);
+        CreateIssueCommand expectedCommand = CreateIssueCommandFromResourceAssembler.toCommandFromResource(1L, resource);
 
         when(issueCommandService.handle(any(CreateIssueCommand.class))).thenReturn(expectedId);
 
@@ -66,7 +66,7 @@ public class IssuesControllerTest {
         IssueResource expectedResource = IssueResourceFromEntityAssembler.toResourceFromEntity(expectedIssue);
 
         // Act
-        ResponseEntity<IssueResource> response = issuesController.createIssue(resource);
+        ResponseEntity<IssueResource> response = issuesController.createIssue(1L,resource);
 
         // Assert
         assertEquals(HttpStatus.CREATED, response.getStatusCode());
@@ -95,7 +95,7 @@ public class IssuesControllerTest {
         when(issueCommandService.handle(any(CreateIssueCommand.class))).thenReturn(0L);
 
         // Act
-        ResponseEntity<IssueResource> response = issuesController.createIssue(resource);
+        ResponseEntity<IssueResource> response = issuesController.createIssue(1L, resource);
 
         // Assert
         assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());

@@ -36,11 +36,15 @@ public class Member extends AuditableAbstractAggregateRoot<Member> {
     })
     private StreetAddress streetAddress;
 
+
+    private Long userId;
+
     public Member() {
         this.role = ScrumRoles.SCRUM_MASTER;
     }
-    public Member(String fullName, ScrumRoles role, String email, String streetAddress) {
+    public Member(Long userId, String fullName, ScrumRoles role, String email, String streetAddress) {
 
+        this.userId = userId;
         this.fullName = fullName;
         this.role = role;
         this.email = new EmailAddress(email);
@@ -48,6 +52,7 @@ public class Member extends AuditableAbstractAggregateRoot<Member> {
     }
 
     public Member(CreateMemberCommand command) {
+        this.userId = command.userId();
         this.fullName = command.fullName();
         this.role = command.role();
         this.email = new EmailAddress(command.email());

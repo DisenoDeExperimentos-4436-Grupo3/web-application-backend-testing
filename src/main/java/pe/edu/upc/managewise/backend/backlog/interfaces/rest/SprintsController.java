@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.*;
 import pe.edu.upc.managewise.backend.backlog.domain.model.commands.DeleteSprintCommand;
 import pe.edu.upc.managewise.backend.backlog.domain.model.queries.GetAllSprintsQuery;
 import pe.edu.upc.managewise.backend.backlog.domain.model.queries.GetSprintByIdQuery;
+import pe.edu.upc.managewise.backend.backlog.domain.model.queries.GetSprintsByUserIdQuery;
 import pe.edu.upc.managewise.backend.backlog.domain.services.SprintCommandService;
 import pe.edu.upc.managewise.backend.backlog.domain.services.SprintQueryService;
 import pe.edu.upc.managewise.backend.backlog.interfaces.rest.resources.CreateSprintResource;
@@ -33,9 +34,9 @@ public class SprintsController {
         this.sprintCommandService = sprintCommandService;
     }
 
-    @PostMapping
-    public ResponseEntity<SprintResource> createSprint(@RequestBody CreateSprintResource resource) {
-        var createSprintCommand = CreateSprintCommandFromResourceAssembler.toCommandFromResource(resource);
+    @PostMapping("/{userId}")
+    public ResponseEntity<SprintResource> createSprint(@PathVariable Long userId, @RequestBody CreateSprintResource resource) {
+        var createSprintCommand = CreateSprintCommandFromResourceAssembler.toCommandFromResource(userId, resource);
         var sprintId = this.sprintCommandService.handle(createSprintCommand);
 
         if (sprintId.equals(0L)) {
@@ -86,4 +87,17 @@ public class SprintsController {
         this.sprintCommandService.handle(deleteSprintCommand);
         return ResponseEntity.noContent().build();
     }
+
+    //get sprint by userId
+    @GetMapping("/user/{userId}")
+    public ResponseEntity<List<SprintResource>> getSprintsByUserId(@PathVariable Long userId) {
+        var getSprintsByUserIdQuery = new GetSprintsByUserIdQuery(userId);
+        var sprints = this.sprintQueryService.handle(getSprintsByUserIdQuery);
+        var sprintResources = sprints.stream()
+                .map(SprintResourceFromEntityAssembler::toResourceFromEntity)
+                .collect(Collectors.toList());
+        return ResponseEntity.ok(sprintResources);
+    }
+
+
 }

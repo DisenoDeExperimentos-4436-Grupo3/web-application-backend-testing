@@ -14,15 +14,17 @@ public class MembersServiceTest {
     void testCreateMember() {
 
         // Arrange
+        Long userId = 1L;
         String fullName = "Pedro Díaz";
         String email = "example@gmail.com";
         String streetAddress = "La marina 156";
         ScrumRoles role = ScrumRoles.DEVELOPMENT_TEAM;
 
         // Act
-        CreateMemberCommand createMemberCommand = new CreateMemberCommand(fullName, email, streetAddress, role);
+        CreateMemberCommand createMemberCommand = new CreateMemberCommand(userId, fullName, email, streetAddress, role);
 
         // Assert
+        assertEquals(userId, createMemberCommand.userId());
         assertEquals(fullName, createMemberCommand.fullName());
         assertEquals(email, createMemberCommand.email());
         assertEquals(streetAddress, createMemberCommand.streetAddress());

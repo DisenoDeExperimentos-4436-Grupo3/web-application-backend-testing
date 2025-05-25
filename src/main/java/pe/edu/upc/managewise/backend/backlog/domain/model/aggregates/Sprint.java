@@ -14,13 +14,17 @@ public class Sprint extends AuditableAbstractAggregateRoot<Sprint> {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    private Long userId;
+
     private String title;
     private String goal;
     private Date startDate;
     private Date endDate;
     private SprintStatus status;
 
-    public Sprint(String title, String goal, Date endDate) {
+    public Sprint(Long userId, String title, String goal, Date endDate) {
+        this.userId = userId;
         this.title = title;
         this.goal = goal;
         this.startDate = new Date();
@@ -33,6 +37,7 @@ public class Sprint extends AuditableAbstractAggregateRoot<Sprint> {
 
     public Sprint(CreateSprintCommand command){
         this();
+        this.userId = command.userId();
         this.title = command.title();
         this.goal = command.goal();
         this.status = SprintStatus.STARTED;

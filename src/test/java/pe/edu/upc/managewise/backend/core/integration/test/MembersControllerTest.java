@@ -46,7 +46,7 @@ public class MembersControllerTest {
         when(memberCommandService.handle(any(CreateMemberCommand.class))).thenReturn(0L);
 
         // Act
-        ResponseEntity<MemberResource> response = memberController.createMember(resource);
+        ResponseEntity<MemberResource> response = memberController.createMember(1L,resource);
 
         // Assert
         assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());

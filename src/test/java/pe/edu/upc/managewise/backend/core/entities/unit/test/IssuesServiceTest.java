@@ -18,6 +18,7 @@ public class IssuesServiceTest {
     void testCreateIssue() {
 
         // Arrange
+        Long userId = 1L;
         String title = "Error al guardar formulario";
         String sprintAssociate = "Sprint 15";
         String description = "Al hacer clic en guardar, el formulario no se persiste correctamente.";
@@ -35,6 +36,7 @@ public class IssuesServiceTest {
 
         // Act
         CreateIssueCommand createIssueCommand = new CreateIssueCommand(
+                userId,
                 title,
                 sprintAssociate,
                 description,
@@ -48,6 +50,7 @@ public class IssuesServiceTest {
         );
 
         // Assert
+        assertEquals(userId, createIssueCommand.userId());
         assertEquals(title, createIssueCommand.title());
         assertEquals(sprintAssociate, createIssueCommand.sprintAssociate());
         assertEquals(description, createIssueCommand.description());

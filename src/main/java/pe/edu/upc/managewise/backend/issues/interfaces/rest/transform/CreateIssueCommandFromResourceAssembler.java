@@ -14,8 +14,9 @@ import java.util.Collections;
 //Entra un JSON y lo convierto en un comman --> input
 //Input
 public class CreateIssueCommandFromResourceAssembler {
-    public static CreateIssueCommand toCommandFromResource(CreateIssueResource resource) {
+    public static CreateIssueCommand toCommandFromResource(Long userId, CreateIssueResource resource) {
         return new CreateIssueCommand(
+                userId,
                 resource.title(),
                 resource.sprintAssociate(),
                 resource.description(),

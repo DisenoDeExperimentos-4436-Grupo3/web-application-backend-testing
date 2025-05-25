@@ -5,11 +5,13 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import pe.edu.upc.managewise.backend.issues.domain.model.aggregates.Issue;
 import pe.edu.upc.managewise.backend.issues.domain.model.commands.CreateEventByIssueIdCommand;
 import pe.edu.upc.managewise.backend.issues.domain.model.commands.CreateEventResource;
 import pe.edu.upc.managewise.backend.issues.domain.model.commands.DeleteIssueCommand;
 import pe.edu.upc.managewise.backend.issues.domain.model.queries.GetAllIssuesQuery;
 import pe.edu.upc.managewise.backend.issues.domain.model.queries.GetIssueByIdQuery;
+import pe.edu.upc.managewise.backend.issues.domain.model.queries.GetIssuesByUserIdQuery;
 import pe.edu.upc.managewise.backend.issues.domain.services.IssueCommandService;
 import pe.edu.upc.managewise.backend.issues.domain.services.IssueQueryService;
 import pe.edu.upc.managewise.backend.issues.interfaces.rest.resources.CreateIssueResource;
@@ -36,9 +38,9 @@ public class IssuesController {
         this.issueCommandService = issueCommandService;
     }
 
-    @PostMapping
-    public ResponseEntity<IssueResource> createIssue(@RequestBody CreateIssueResource resource){
-        var createIssueCommand = CreateIssueCommandFromResourceAssembler.toCommandFromResource(resource);
+    @PostMapping("/{userId}")
+    public ResponseEntity<IssueResource> createIssue(@PathVariable Long userId, @RequestBody CreateIssueResource resource){
+        var createIssueCommand = CreateIssueCommandFromResourceAssembler.toCommandFromResource(userId, resource);
         var issueId = this.issueCommandService.handle(createIssueCommand);
 
         if(issueId.equals(0L)){
@@ -50,6 +52,16 @@ public class IssuesController {
 
         var issueResource = IssueResourceFromEntityAssembler.toResourceFromEntity(optionIssue.get());
         return new ResponseEntity<>(issueResource, HttpStatus.CREATED);
+    }
+
+    @GetMapping("user/{userId}")
+    public ResponseEntity<List<IssueResource>> getIssuesByUserId(@PathVariable Long userId) {
+        var getIssuesByUserIdQuery = new GetIssuesByUserIdQuery(userId);
+        var issues = this.issueQueryService.handle(getIssuesByUserIdQuery);
+        var issueResources = issues.stream()
+                .map(IssueResourceFromEntityAssembler::toResourceFromEntity)
+                .collect(Collectors.toList());
+        return ResponseEntity.ok(issueResources);
     }
 
     @PostMapping("/{issueId}/events")

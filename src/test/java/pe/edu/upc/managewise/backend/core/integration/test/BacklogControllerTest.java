@@ -43,9 +43,10 @@ public class BacklogControllerTest {
         Long sprintId = 20L;
 
         Epic epic = new Epic( 2L, "UX Epic", "Mejoras UX");
-        Sprint sprint = new Sprint("Sprint 1", "Frontend improvements", new Date());
+        Sprint sprint = new Sprint(1L, "Sprint 1", "Frontend improvements", new Date());
 
         CreateUserStoryCommand createUserStoryCommand = new CreateUserStoryCommand(
+                1L,
                 "Crear menú accesible",
                 "Como usuario quiero acceder fácilmente al menú principal.",
                 epicId,

@@ -7,12 +7,20 @@ import java.time.LocalDate;
 import java.time.format.DateTimeParseException;
 
 @Embeddable
-public record MeetingDate(LocalDate date) {
+public class MeetingDate {
 
-    public MeetingDate {
+    private LocalDate date;
+
+    // Constructor sin argumentos requerido por JPA
+    protected MeetingDate() {
+    }
+
+    // Constructor con validación
+    public MeetingDate(LocalDate date) {
         if (date == null) {
             throw new IllegalArgumentException("Date cannot be null");
         }
+        this.date = date;
     }
 
     // Método de fábrica para crear MeetingDate a partir de una cadena
@@ -25,9 +33,12 @@ public record MeetingDate(LocalDate date) {
         }
     }
 
+    public LocalDate getDate() {
+        return date;
+    }
+
     @Override
     public String toString() {
         return date.toString(); // Formato ISO 8601
     }
 }
-

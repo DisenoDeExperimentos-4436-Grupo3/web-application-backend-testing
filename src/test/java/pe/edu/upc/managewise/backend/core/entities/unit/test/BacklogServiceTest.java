@@ -34,15 +34,17 @@ public class BacklogServiceTest {
     void testCreateSprint() {
 
         // Arrange
+        Long userId = 1L;
         String title = "Sprint 1: Front End";
         String goal = "Diseñar y desplegar un frontend pertinente para la solución planteada.";
         Date endDate = new Date();
 
 
         // Act
-        CreateSprintCommand createSprintCommand = new CreateSprintCommand(title, goal, endDate);
+        CreateSprintCommand createSprintCommand = new CreateSprintCommand(userId, title, goal, endDate);
 
         // Assert
+        assertEquals(userId, createSprintCommand.userId());
         assertEquals(title, createSprintCommand.title());
         assertEquals(goal, createSprintCommand.goal());
         assertEquals(endDate, createSprintCommand.endDate());
@@ -52,6 +54,7 @@ public class BacklogServiceTest {
     void testCreateUserStory() {
 
         // Arrange
+        Long userId = 1L;
         String title = "Crear una nueva incidencia";
         String description = "Como miembro del equipo, quiero crear una nueva incidencia, para reportar un problema o sugerir una mejora en el sistema.";
         Long epicId = 154L;
@@ -76,9 +79,10 @@ public class BacklogServiceTest {
 
 
         // Act
-        CreateUserStoryCommand createUserStoryCommand = new CreateUserStoryCommand(title, description, epicId, sprintId, effort, tasks);
+        CreateUserStoryCommand createUserStoryCommand = new CreateUserStoryCommand(userId, title, description, epicId, sprintId, effort, tasks);
 
         // Assert
+        assertEquals(userId, createUserStoryCommand.userId());
         assertEquals(title, createUserStoryCommand.title());
         assertEquals(description, createUserStoryCommand.description());
         assertEquals(epicId, createUserStoryCommand.epicId());

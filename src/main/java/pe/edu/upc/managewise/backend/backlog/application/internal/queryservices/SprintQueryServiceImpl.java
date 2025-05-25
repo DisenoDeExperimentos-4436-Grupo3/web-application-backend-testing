@@ -5,6 +5,7 @@ import pe.edu.upc.managewise.backend.backlog.domain.model.aggregates.Sprint;
 import pe.edu.upc.managewise.backend.backlog.domain.model.queries.GetAllSprintsQuery;
 import pe.edu.upc.managewise.backend.backlog.domain.model.queries.GetSprintByIdQuery;
 import pe.edu.upc.managewise.backend.backlog.domain.model.queries.GetSprintByTittleQuery;
+import pe.edu.upc.managewise.backend.backlog.domain.model.queries.GetSprintsByUserIdQuery;
 import pe.edu.upc.managewise.backend.backlog.domain.services.SprintQueryService;
 import pe.edu.upc.managewise.backend.backlog.infrastructure.persistence.jpa.repositories.SprintRepository;
 
@@ -32,5 +33,10 @@ public class SprintQueryServiceImpl implements SprintQueryService {
     @Override
     public Optional<Sprint> handle(GetSprintByTittleQuery query) {
         return this.sprintRepository.findByTitle(query.tittle());
+    }
+
+    @Override
+    public List<Sprint> handle(GetSprintsByUserIdQuery query){
+        return this.sprintRepository.findByUserId(query.userId());
     }
 }

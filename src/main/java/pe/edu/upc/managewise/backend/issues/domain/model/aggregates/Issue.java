@@ -18,6 +18,8 @@ public class Issue extends AuditableAbstractAggregateRoot<Issue> {
     @Column(name = "title", length = 70, nullable = false)
     private String title;
 
+    private Long userId;
+
     @Getter
     @Column(name = "sprint_associate", nullable = false)
     private String sprintAssociate;
@@ -74,7 +76,8 @@ public class Issue extends AuditableAbstractAggregateRoot<Issue> {
         this.priority = IssuePriorities.MEDIUM;
     }
 
-    public Issue(String title, String sprintAssociate, String description, IssueStatuses status,IssuePriorities priority, String assignedTo, String madeBy, String createdIn, String resolutionDate) {
+    public Issue(Long userId, String title, String sprintAssociate, String description, IssueStatuses status,IssuePriorities priority, String assignedTo, String madeBy, String createdIn, String resolutionDate) {
+        this.userId = userId;
         this.title = title;
         this.sprintAssociate = sprintAssociate;
         this.description = description;
@@ -88,6 +91,7 @@ public class Issue extends AuditableAbstractAggregateRoot<Issue> {
     }
 
   public Issue(CreateIssueCommand command) {
+    this.userId = command.userId();
     this.title = command.title();
     this.sprintAssociate = command.sprintAssociate();
     this.description = command.description();

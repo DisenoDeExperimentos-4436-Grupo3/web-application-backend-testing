@@ -23,6 +23,7 @@ import pe.edu.upc.managewise.backend.members.domain.model.commands.DeleteMemberC
 import pe.edu.upc.managewise.backend.members.domain.model.commands.UpdateMemberCommand;
 import pe.edu.upc.managewise.backend.members.domain.model.queries.GetAllMembersQuery;
 import pe.edu.upc.managewise.backend.members.domain.model.queries.GetMemberByIdQuery;
+import pe.edu.upc.managewise.backend.members.domain.model.queries.GetMembersByUserIdQuery;
 import pe.edu.upc.managewise.backend.members.domain.services.MemberCommandService;
 import pe.edu.upc.managewise.backend.members.domain.services.MemberQueryService;
 import pe.edu.upc.managewise.backend.members.interfaces.rest.resources.CreateMemberResource;
@@ -47,9 +48,9 @@ public class MemberController {
         this.memberCommandService = memberCommandService;
     }
 
-    @PostMapping
-    public ResponseEntity<MemberResource> createMember(@RequestBody CreateMemberResource resource){
-        var createMemberCommand = CreateMemberCommandFromResourceAssembler.toCommandFromResource(resource);
+    @PostMapping("/{userId}")
+    public ResponseEntity<MemberResource> createMember(@PathVariable Long userId, @RequestBody CreateMemberResource resource){
+        var createMemberCommand = CreateMemberCommandFromResourceAssembler.toCommandFromResource(userId, resource);
         var memberId = this.memberCommandService.handle(createMemberCommand);
 
         if(memberId.equals(0L)){
@@ -67,6 +68,17 @@ public class MemberController {
     public ResponseEntity<List<MemberResource>> getAllMembers() {
         var getAllMembersQuery = new GetAllMembersQuery();
         var members = this.memberQueryService.handle(getAllMembersQuery);
+        var memberResources = members.stream()
+                .map(MemberResourceFromEntityAssembler::toResourceFromEntity)
+                .collect(Collectors.toList());
+        return ResponseEntity.ok(memberResources);
+    }
+
+    //get por user Id
+    @GetMapping("/user/{userId}")
+    public ResponseEntity<List<MemberResource>> getMembersByUserId(@PathVariable Long userId) {
+        var getMembersByUserIdQuery = new GetMembersByUserIdQuery(userId);
+        var members = this.memberQueryService.handle(getMembersByUserIdQuery);
         var memberResources = members.stream()
                 .map(MemberResourceFromEntityAssembler::toResourceFromEntity)
                 .collect(Collectors.toList());
