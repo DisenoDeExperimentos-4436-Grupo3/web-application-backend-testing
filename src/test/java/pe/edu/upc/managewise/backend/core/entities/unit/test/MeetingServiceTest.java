@@ -2,7 +2,6 @@ package pe.edu.upc.managewise.backend.core.entities.unit.test;
 
 import org.junit.jupiter.api.Test;
 import pe.edu.upc.managewise.backend.meeting.domain.model.commands.CreateMeetingCommand;
-import pe.edu.upc.managewise.backend.meeting.domain.model.commands.CreateRecordingCommand;
 import pe.edu.upc.managewise.backend.meeting.domain.model.commands.UpdateMeetingCommand;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -12,20 +11,24 @@ public class MeetingServiceTest {
     void testCreateMeeting() {
 
         //Arrange
+        Long hostId = 1L;
         String title = "Sprint 1";
         String dateStr = "2025-05-01";
         String timeStr = "45 min";
         String link = "url";
+        String accessCode = "ard";
 
 
         // Act
-        CreateMeetingCommand createMeetingCommand = new CreateMeetingCommand(title, dateStr, timeStr, link);
+        CreateMeetingCommand createMeetingCommand = new CreateMeetingCommand(hostId, title, dateStr, timeStr, link, accessCode);
 
         // Assert
+        assertEquals(hostId, createMeetingCommand.hostId());
         assertEquals(title, createMeetingCommand.title());
         assertEquals(dateStr, createMeetingCommand.dateStr());
         assertEquals(timeStr, createMeetingCommand.timeStr());
         assertEquals(link, createMeetingCommand.link());
+        assertEquals(accessCode, createMeetingCommand.accessCode());
     }
 
 
@@ -38,10 +41,11 @@ public class MeetingServiceTest {
         String dateStr = "2025-08-01";
         String timeStr = "45 min";
         String link = "urlCorregida";
+        String accessCode = "ads";
 
 
         // Act
-        UpdateMeetingCommand updateMeetingCommand = new UpdateMeetingCommand(meetingId, title, dateStr, timeStr, link);
+        UpdateMeetingCommand updateMeetingCommand = new UpdateMeetingCommand(meetingId, title, dateStr, timeStr, link, accessCode);
 
         // Assert
         assertEquals(meetingId, updateMeetingCommand.meetingId());
@@ -49,27 +53,7 @@ public class MeetingServiceTest {
         assertEquals(dateStr, updateMeetingCommand.dateStr());
         assertEquals(timeStr, updateMeetingCommand.timeStr());
         assertEquals(link, updateMeetingCommand.link());
-    }
-
-
-    @Test
-    void testCreateRecording() {
-
-        //Arrange
-        Long meetingId = 1L;
-        String recordingLink = "url15";
-        String duration = "45 min";
-        boolean publicAccess = true;
-
-
-        // Act
-        CreateRecordingCommand createRecordingCommand = new CreateRecordingCommand(meetingId, recordingLink, duration, publicAccess);
-
-        // Assert
-        assertEquals(meetingId, createRecordingCommand.meetingId());
-        assertEquals(recordingLink, createRecordingCommand.recordingLink());
-        assertEquals(duration, createRecordingCommand.duration());
-        assertEquals(publicAccess, createRecordingCommand.publicAccess());
+        assertEquals(accessCode, updateMeetingCommand.accessCode());
     }
 
 }

@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.*;
 import pe.edu.upc.managewise.backend.meeting.domain.model.commands.DeleteMeetingCommand;
 import pe.edu.upc.managewise.backend.meeting.domain.model.queries.GetAllMeetingsQuery;
 import pe.edu.upc.managewise.backend.meeting.domain.model.queries.GetMeetingByIdQuery;
+import pe.edu.upc.managewise.backend.meeting.domain.model.queries.GetMeetingsByHostIdQuery;
 import pe.edu.upc.managewise.backend.meeting.domain.services.MeetingCommandService;
 import pe.edu.upc.managewise.backend.meeting.domain.services.MeetingQueryService;
 import pe.edu.upc.managewise.backend.meeting.interfaces.rest.resources.CreateMeetingResource;
@@ -36,9 +37,9 @@ public class MeetingController {
         this.meetingCommandService = meetingCommandService;
     }
 
-    @PostMapping
-    public ResponseEntity<MeetingResource> createMeeting(@RequestBody CreateMeetingResource resource) {
-        var createMeetingCommand = CreateMeetingCommandFromResourceAssembler.toCommandFromResource(resource);
+    @PostMapping("{userId}")
+    public ResponseEntity<MeetingResource> createMeeting(@PathVariable Long userId, @RequestBody CreateMeetingResource resource) {
+        var createMeetingCommand = CreateMeetingCommandFromResourceAssembler.toCommandFromResource(userId, resource);
         var meetingId = this.meetingCommandService.handle(createMeetingCommand);
 
         if (meetingId.equals(0L)) {
@@ -56,6 +57,16 @@ public class MeetingController {
     public ResponseEntity<List<MeetingResource>> getAllMeetings() {
         var getAllMeetingsQuery = new GetAllMeetingsQuery();
         var meetings = this.meetingQueryService.handle(getAllMeetingsQuery);
+        var meetingResources = meetings.stream()
+                .map(MeetingResourceFromEntityAssembler::toResourceFromEntity)
+                .collect(Collectors.toList());
+        return ResponseEntity.ok(meetingResources);
+    }
+
+    @GetMapping("/user/{userId}")
+    public ResponseEntity<List<MeetingResource>> getMeetingsByHostId(@PathVariable Long userId) {
+        var getMeetingsByHostIdQuery = new GetMeetingsByHostIdQuery(userId);
+        var meetings = this.meetingQueryService.handle(getMeetingsByHostIdQuery);
         var meetingResources = meetings.stream()
                 .map(MeetingResourceFromEntityAssembler::toResourceFromEntity)
                 .collect(Collectors.toList());

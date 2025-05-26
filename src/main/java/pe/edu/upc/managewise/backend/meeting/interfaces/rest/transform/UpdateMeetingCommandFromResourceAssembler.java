@@ -6,6 +6,6 @@ import pe.edu.upc.managewise.backend.meeting.interfaces.rest.resources.MeetingRe
 
 public class UpdateMeetingCommandFromResourceAssembler {
     public static UpdateMeetingCommand toCommandFromResource(Long meetingId, MeetingResource resource) {
-        return new UpdateMeetingCommand(meetingId, resource.title(), resource.dateStr(), resource.timeStr(), resource.link());
+        return new UpdateMeetingCommand(meetingId, resource.title(), resource.dateStr(), resource.timeStr(), resource.link(), resource.accessCode());
     }
 }

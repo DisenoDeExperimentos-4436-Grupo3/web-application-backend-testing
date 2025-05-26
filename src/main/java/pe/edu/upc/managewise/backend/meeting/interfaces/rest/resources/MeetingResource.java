@@ -11,7 +11,6 @@ public record MeetingResource(
         @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "HH:mm") String timeStr,
         String link,
         String accessCode,
-        RecordingResource recording,
         Long host,
         List<Long> members
 ) {}

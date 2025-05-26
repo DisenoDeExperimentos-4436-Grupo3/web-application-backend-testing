@@ -28,6 +28,8 @@ public class MeetingContextFacade {
         this.meetingQueryService = meetingQueryService;
     }
 
+
+
     // Buscar una reunión por ID y devolver como recurso
     public Optional<MeetingResource> fetchMeetingById(Long meetingId) {
         var getMeetingByIdQuery = new GetMeetingByIdQuery(meetingId);
@@ -70,8 +72,8 @@ public class MeetingContextFacade {
     }
 
     // Crear una nueva reunión
-    public Long createMeeting(String title, String date, String time, String link) {
-        var createMeetingCommand = new CreateMeetingCommand(title, date, time, link);
+    public Long createMeeting(Long hostId, String title, String date, String time, String link, String accessCode) {
+        var createMeetingCommand = new CreateMeetingCommand(hostId, title, date, time, link, accessCode);
         var meetingId = meetingCommandService.handle(createMeetingCommand);
         if (meetingId == null) {
             return 0L;
@@ -80,8 +82,8 @@ public class MeetingContextFacade {
     }
 
     // Actualizar una reunión existente
-    public Long updateMeeting(Long meetingId, String title, String date, String time, String link) {
-        var updateMeetingCommand = new UpdateMeetingCommand(meetingId, title, date, time, link);
+    public Long updateMeeting(Long meetingId, String title, String date, String time, String link, String accessCode) {
+        var updateMeetingCommand = new UpdateMeetingCommand(meetingId, title, date, time, link, accessCode);
         var optionalMeeting = meetingCommandService.handle(updateMeetingCommand);
         if (optionalMeeting.isEmpty()) {
             return 0L;

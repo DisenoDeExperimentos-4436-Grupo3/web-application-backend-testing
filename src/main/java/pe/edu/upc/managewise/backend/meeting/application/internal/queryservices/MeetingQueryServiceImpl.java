@@ -6,6 +6,7 @@ import pe.edu.upc.managewise.backend.meeting.domain.model.aggregates.Meeting;
 import pe.edu.upc.managewise.backend.meeting.domain.model.queries.GetAllMeetingsQuery;
 import pe.edu.upc.managewise.backend.meeting.domain.model.queries.GetMeetingByIdQuery;
 import pe.edu.upc.managewise.backend.meeting.domain.model.queries.GetMeetingByTitleQuery;
+import pe.edu.upc.managewise.backend.meeting.domain.model.queries.GetMeetingsByHostIdQuery;
 import pe.edu.upc.managewise.backend.meeting.domain.services.MeetingQueryService;
 import pe.edu.upc.managewise.backend.meeting.infrastructure.persistence.jpa.repositories.MeetingRepository;
 
@@ -34,5 +35,10 @@ public class MeetingQueryServiceImpl implements MeetingQueryService {
     @Override
     public Optional<Meeting> handle(GetMeetingByTitleQuery query) {
         return this.meetingRepository.findByTitle(query.title());
+    }
+
+    @Override
+    public List<Meeting> handle(GetMeetingsByHostIdQuery query){
+        return this.meetingRepository.findByHostId(query.hostId());
     }
 }

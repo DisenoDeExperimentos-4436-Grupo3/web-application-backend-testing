@@ -39,14 +39,15 @@ public class MeetingControllerTest {
                 "Reunión fallida",
                 "2025-05-15",
                 "10:00",
-                "https://meet.example.com"
+                "https://meet.example.com",
+                "asd"
         );
 
         when(meetingCommandService.handle(any(CreateMeetingCommand.class)))
                 .thenReturn(0L);
 
         // Act
-        ResponseEntity<MeetingResource> response = meetingController.createMeeting(resource);
+        ResponseEntity<MeetingResource> response = meetingController.createMeeting(1L, resource);
 
         // Assert
         assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
