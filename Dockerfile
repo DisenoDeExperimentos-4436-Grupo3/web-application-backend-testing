@@ -1,11 +1,24 @@
-# Usar una imagen base de OpenJDK
-FROM openjdk:17-jdk-slim
+# Etapa 1: Construcción
+FROM maven:3.9.4-eclipse-temurin-17 AS build
 
-# Establecer el directorio de trabajo dentro del contenedor
+# Establecer el directorio de trabajo
 WORKDIR /app
 
-# Copiar el archivo JAR generado al contenedor
-COPY target/managewise-backend-0.0.1-SNAPSHOT.jar app.jar
+# Copiar los archivos de configuración de Maven y el código fuente
+COPY pom.xml .
+COPY src ./src
+
+# Construir el proyecto y empaquetar el archivo JAR
+RUN mvn clean package -DskipTests
+
+# Etapa 2: Ejecución
+FROM openjdk:17-jdk-slim
+
+# Establecer el directorio de trabajo
+WORKDIR /app
+
+# Copiar el archivo JAR desde la etapa de construcción
+COPY --from=build /app/target/managewise-backend-0.0.1-SNAPSHOT.jar app.jar
 
 # Exponer el puerto en el que se ejecutará la aplicación
 EXPOSE 8080
