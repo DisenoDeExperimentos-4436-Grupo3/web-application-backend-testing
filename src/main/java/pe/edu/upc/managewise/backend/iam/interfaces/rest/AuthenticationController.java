@@ -6,16 +6,18 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import pe.edu.upc.managewise.backend.iam.domain.model.commands.SignInCommand;
+import pe.edu.upc.managewise.backend.iam.domain.model.commands.SignUpCommand;
+import pe.edu.upc.managewise.backend.iam.domain.model.entities.Role;
 import pe.edu.upc.managewise.backend.iam.domain.services.RecaptchaService;
 import pe.edu.upc.managewise.backend.iam.domain.services.UserCommandService;
-import pe.edu.upc.managewise.backend.iam.interfaces.rest.resources.AuthenticatedUserResource;
-import pe.edu.upc.managewise.backend.iam.interfaces.rest.resources.SignInResource;
-import pe.edu.upc.managewise.backend.iam.interfaces.rest.resources.SignUpResource;
-import pe.edu.upc.managewise.backend.iam.interfaces.rest.resources.UserResource;
+import pe.edu.upc.managewise.backend.iam.interfaces.rest.resources.*;
 import pe.edu.upc.managewise.backend.iam.interfaces.rest.transform.AuthenticatedUserResourceFromEntityAssembler;
 import pe.edu.upc.managewise.backend.iam.interfaces.rest.transform.SignInCommandFromResourceAssembler;
 import pe.edu.upc.managewise.backend.iam.interfaces.rest.transform.SignUpCommandFromResourceAssembler;
 import pe.edu.upc.managewise.backend.iam.interfaces.rest.transform.UserResourceFromEntityAssembler;
+
+import java.util.ArrayList;
 
 /**
  * AuthenticationController
@@ -86,6 +88,26 @@ public class AuthenticationController {
     return ResponseEntity.ok(authenticatedUserResource);
   }
 
+  @PostMapping("/mobile/sign-in")
+  public ResponseEntity<AuthenticatedUserResource> signInMobile(
+          @RequestBody SignInMobileResource signInResource,
+          HttpServletRequest request) {
+
+    var signInCommand = new SignInCommand(signInResource.username(), signInResource.password());
+    var authenticatedUser = userCommandService.handle(signInCommand);
+    if (authenticatedUser.isEmpty()) {
+      return ResponseEntity.notFound().build();
+    }
+
+    var authenticatedUserResource = AuthenticatedUserResourceFromEntityAssembler
+            .toResourceFromEntity(
+                    authenticatedUser.get().getLeft(),
+                    authenticatedUser.get().getRight()
+            );
+
+    return ResponseEntity.ok(authenticatedUserResource);
+  }
+
   /**
    * Handles the sign-up request.
    * @param signUpResource the sign-up request body.
@@ -113,4 +135,26 @@ public class AuthenticationController {
     var userResource = UserResourceFromEntityAssembler.toResourceFromEntity(user.get());
     return new ResponseEntity<>(userResource, HttpStatus.CREATED);
   }
+
+  @PostMapping("/mobile/sign-up")
+  public ResponseEntity<UserResource> signUpMobile(
+          @RequestBody SignUpMobileResource signUpResource,
+          HttpServletRequest request) {
+
+    var roles = signUpResource.roles() != null
+            ? signUpResource.roles().stream().map(name -> Role.toRoleFromName(name)).toList()
+            : new ArrayList<Role>();
+
+    var signUpCommand = new SignUpCommand(signUpResource.username(), signUpResource.password(), roles);
+    var user = userCommandService.handle(signUpCommand);
+    if (user.isEmpty()) {
+      return ResponseEntity.badRequest().build();
+    }
+
+    var userResource = UserResourceFromEntityAssembler.toResourceFromEntity(user.get());
+    return new ResponseEntity<>(userResource, HttpStatus.CREATED);
+  }
 }
+
+
+
