@@ -96,18 +96,29 @@ public class MemberController {
     }
 
     @PutMapping("/{memberId}")
-    public ResponseEntity<MemberResource> updateIssue(@PathVariable Long memberId, @RequestBody MemberResource resource) {
-        //Crea el command y el handle
-        var updateMemberCommand = UpdateMemberCommandFromResourceAssembler.toCommandFromResource(memberId, resource);
-        var optionalMember = this.memberCommandService.handle(updateMemberCommand);
-        //valida que el optional profile esta vacio o no
-        if (optionalMember.isEmpty())
+    public ResponseEntity<MemberResource> updateMember(@PathVariable Long memberId, @RequestBody MemberResource resource) {
+        try {
+
+            //Crea el command y el handle
+            var updateMemberCommand = UpdateMemberCommandFromResourceAssembler.toCommandFromResource(memberId, resource);
+            var optionalMember = this.memberCommandService.handle(updateMemberCommand);
+
+            if (optionalMember.isEmpty()) {
+                return ResponseEntity.badRequest().build();
+            }
+
+            var memberResource = MemberResourceFromEntityAssembler.toResourceFromEntity(optionalMember.get());
+            return ResponseEntity.ok(memberResource);
+        } catch (IllegalArgumentException e) {
+            // Manejar errores de validación
+            System.err.println("Error updating member: " + e.getMessage());
             return ResponseEntity.badRequest().build();
-        //en caso que no este vacio
-        //lo convierto a un profile resource
-        var memberResource = MemberResourceFromEntityAssembler.toResourceFromEntity(optionalMember.get());
-        //lo devuelvo
-        return ResponseEntity.ok(memberResource);
+
+        } catch (Exception e) {
+            // Manejar errores inesperados
+            System.err.println("Unexpected error: " + e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
     }
 
     //annotacion DeleteMapping
